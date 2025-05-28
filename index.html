@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0">
+    <meta name="description" content="Interactive Biology Quiz Platform - Test your knowledge with our comprehensive quiz system">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Biology Quiz Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <div class="quiz-container">
+        <header>
+            <h1>🧬 Biology Quiz</h1>
+        </header>
+
+        <main id="quiz-area">
+            <div id="question-header">
+                <span id="question-number" aria-live="polite">Question X of Y</span>
+                <span id="timer" aria-live="polite">Time: 00:00</span>
+            </div>
+            <div id="question-text" role="heading" aria-level="2"></div>
+            <div id="options-container" role="radiogroup" aria-labelledby="question-text"></div>
+            <nav id="navigation-buttons" aria-label="Quiz navigation">
+                <button id="prev-btn" onclick="prevQuestion()" aria-label="Go to previous question">
+                    ← Previous
+                </button>
+                <button id="confirm-btn" onclick="confirmAnswer()" aria-label="Confirm your answer">
+                    ✓ Confirm Answer
+                </button>
+                <button id="next-btn" onclick="nextQuestion()" aria-label="Go to next question">
+                    Next →
+                </button>
+            </nav>
+            <button id="submit-btn" onclick="submitQuiz()" aria-label="Submit quiz for grading">
+                🎯 Submit Quiz
+            </button>
+        </main>
+
+        <aside id="question-palette" aria-label="Question navigation palette">
+            <h2>Question Palette</h2>
+        </aside>
+
+        <section id="results-area" style="display:none;" aria-label="Quiz results">
+            <h2>🎉 Quiz Results</h2>
+            <p id="score" aria-live="polite"></p>
+            <div id="answers-review" aria-label="Detailed answer review"></div>
+            <button onclick="restartQuiz()" aria-label="Start a new quiz">
+                🔄 Restart Quiz
+            </button>
+        </section>
+    </div>
+
+    <script src="questions_data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
