@@ -6,6 +6,7 @@ let confirmedAnswers = [];
 let score = 0;
 let startTime = null;
 let timerInterval = null;
+let currentLanguage = 'en'; // Default language
 
 // DOM Elements
 const questionTextEl = document.getElementById('question-text');
@@ -34,6 +35,46 @@ function formatTime(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function getLocalizedText(item, lang) {
+    if (typeof item === 'string') return item; // Fallback for non-translated items
+    return item[lang] || item['en']; // Fallback to English if lang not found
+}
+
+function changeLanguage(lang) {
+    currentLanguage = lang;
+    document.documentElement.lang = lang; // Set lang attribute on HTML tag
+    displayQuestion(); // Re-display the current question in the new language
+    // Optionally, re-render other translatable static texts (like palette title)
+    const paletteTitle = document.querySelector('#question-palette h2');
+    if (paletteTitle) {
+        paletteTitle.textContent = getLocalizedText({ en: "Question Palette", bn: "প্রশ্ন তালিকা" }, currentLanguage);
+    }
+    const submitButton = document.getElementById('submit-btn');
+    if (submitButton) {
+        submitButton.innerHTML = getLocalizedText({ en: "🎯 Submit Quiz", bn: "🎯 কুইজ জমা দিন" }, currentLanguage);
+    }
+    const prevButton = document.getElementById('prev-btn');
+    if (prevButton) {
+        prevButton.innerHTML = getLocalizedText({ en: "← Previous", bn: "← পূর্ববর্তী" }, currentLanguage);
+    }
+    const confirmButton = document.getElementById('confirm-btn');
+    if (confirmButton) {
+        confirmButton.innerHTML = getLocalizedText({ en: "✓ Confirm Answer", bn: "✓ উত্তর নিশ্চিত করুন" }, currentLanguage);
+    }
+    const nextButton = document.getElementById('next-btn');
+    if (nextButton) {
+        nextButton.innerHTML = getLocalizedText({ en: "Next →", bn: "পরবর্তী →" }, currentLanguage);
+    }
+    const resultsTitle = document.querySelector('#results-area h2');
+    if (resultsTitle) {
+        resultsTitle.innerHTML = getLocalizedText({ en: "🎉 Quiz Results", bn: "🎉 কুইজের ফলাফল" }, currentLanguage);
+    }
+     const restartButton = document.querySelector('#results-area button');
+    if (restartButton) {
+        restartButton.innerHTML = getLocalizedText({ en: "🔄 Restart Quiz", bn: "🔄 কুইজ পুনরায় শুরু করুন" }, currentLanguage);
+    }
 }
 
 function startTimer() {
@@ -68,13 +109,13 @@ function displayQuestion() {
     
     setTimeout(() => {
         const questionData = quizQuestions[currentQuestionIndex];
-        questionTextEl.textContent = `Q${currentQuestionIndex + 1}: ${questionData.question}`;
+        questionTextEl.textContent = `Q${currentQuestionIndex + 1}: ${getLocalizedText(questionData.question, currentLanguage)}`;
         optionsContainerEl.innerHTML = '';
 
         questionData.options.forEach((option, index) => {
             const optionButton = document.createElement('button');
             optionButton.classList.add('option-btn');
-            optionButton.textContent = option;
+            optionButton.textContent = getLocalizedText(option, currentLanguage);
             optionButton.onclick = () => selectOption(index);
             optionButton.setAttribute('role', 'radio');
             optionButton.setAttribute('aria-checked', 'false');
@@ -291,7 +332,7 @@ function submitQuiz() {
     });
 
     const percentage = Math.round((score / quizQuestions.length) * 100);
-    scoreEl.textContent = `Your Score: ${score} / ${quizQuestions.length} (${percentage}%)`;
+    scoreEl.textContent = `${getLocalizedText({en: "Your Score:", bn: "আপনার স্কোর:"}, currentLanguage)} ${score} / ${quizQuestions.length} (${percentage}%)`;
     
     displayAnswersReview();
     
@@ -326,7 +367,7 @@ function displayAnswersReview() {
         item.style.animationDelay = `${index * 0.05}s`;
 
         const qText = document.createElement('p');
-        qText.innerHTML = `<strong>Q${index + 1}: ${q.question}</strong>`;
+        qText.innerHTML = `<strong>Q${index + 1}: ${getLocalizedText(q.question, currentLanguage)}</strong>`;
         item.appendChild(qText);
 
         const optionsDiv = document.createElement('div');
@@ -334,7 +375,7 @@ function displayAnswersReview() {
 
         q.options.forEach((opt, optIndex) => {
             const optP = document.createElement('div');
-            optP.textContent = opt;
+            optP.textContent = getLocalizedText(opt, currentLanguage);
 
             if (optIndex === q.answer) {
                 optP.classList.add('actual-correct');
@@ -358,7 +399,7 @@ function displayAnswersReview() {
 
         if (userAnswers[index] === null) {
             const notAnsweredP = document.createElement('p');
-            notAnsweredP.textContent = "You did not answer this question.";
+            notAnsweredP.textContent = getLocalizedText({ en: "You did not answer this question.", bn: "আপনি এই প্রশ্নের উত্তর দেননি।" }, currentLanguage);
             notAnsweredP.style.fontStyle = "italic";
             notAnsweredP.style.color = "#777";
             item.appendChild(notAnsweredP);
@@ -455,7 +496,10 @@ function handleTouchEnd(e) {
 // Initialize Quiz
 window.onload = () => {
     if (typeof allQuestions === 'undefined' || allQuestions.length === 0) {
-        questionTextEl.textContent = "No questions loaded. Please check questions_data.js";
+        questionTextEl.textContent = getLocalizedText({
+            en: "No questions loaded. Please check questions_data.js", 
+            bn: "কোনও প্রশ্ন লোড করা হয়নি। অনুগ্রহ করে questions_data.js পরীক্ষা করুন"
+        }, currentLanguage);
         return;
     }
     
@@ -463,10 +507,24 @@ window.onload = () => {
     selectQuizQuestions();
     
     if (quizQuestions.length === 0) {
-        questionTextEl.textContent = "Failed to select quiz questions. Ensure allQuestions array is populated.";
+        questionTextEl.textContent = getLocalizedText({
+            en: "Failed to select quiz questions. Ensure allQuestions array is populated.",
+            bn: "কুইজের প্রশ্ন নির্বাচন করতে ব্যর্থ। allQuestions অ্যারে জনবহুল কিনা তা নিশ্চিত করুন।"
+        }, currentLanguage);
         return;
     }
     
+    // Set initial language based on HTML select or browser preference
+    const langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+        currentLanguage = langSelect.value;
+    } else {
+        currentLanguage = navigator.language.startsWith('bn') ? 'bn' : 'en';
+    }
+    document.documentElement.lang = currentLanguage;
+    if(langSelect) langSelect.value = currentLanguage;
+    
+    changeLanguage(currentLanguage); // Apply initial language to static texts
     renderPalette();
     displayQuestion();
     startTimer();
