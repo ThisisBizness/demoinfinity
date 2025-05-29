@@ -9,13 +9,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Biology Quiz Platform</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
     <div class="quiz-container">
         <header>
-            <h1>🧬 Biology Quiz</h1>
+            <h1>�� Biology Quiz</h1>
+            <div class="language-switcher">
+                <label for="lang-select">Language:</label>
+                <select id="lang-select" onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="bn">বাংলা (Bengali)</option>
+                </select>
+            </div>
         </header>
 
         <main id="quiz-area">
